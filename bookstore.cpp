@@ -41,7 +41,7 @@ public:
 		string file_name = book_name +"_"+ author_name;
 		file.open(file_name,ios::out);
 
-		if(!file.is_open()) cout<<"ERROR OPENINI FILE!"<<endl;
+		if(!file.is_open()) cout<<"ERROR OPENINIG FILE!"<<endl;
 
 		file<<this->book_name<<endl;
 		file<<this->author_name<<endl;
@@ -53,13 +53,13 @@ public:
 
 	void edit_details(){
 		string bn1,bn2,an1,an2; int p,s;
-		cout<<"**Enter previous Details**";
+		cout<<"**Enter previous Details**"<<endl;
 
 		cout<<"Prev Book Name: "; getline(cin,bn1);
 		cout<<"Prev Author Name: "; getline(cin,an1);
 		string file_name_prev = bn1 +'_'+ an1;
 
-		cout<<"**Enter New Details**";
+		cout<<"**Enter New Details**"<<endl;
 		cout<<"Book Name: "; getline(cin,bn2);
 		this->book_name = bn2;
 		cout<<"Author Name: "; getline(cin,an2);
@@ -72,7 +72,7 @@ public:
 		fstream file;
 		file.open(file_name_prev,ios::out);
 
-		if(!file.is_open()) cout<<"ERROR OPENINI FILE!"<<endl;
+		if(!file.is_open()) cout<<"ERROR OPENINIG FILE!"<<endl;
 
 		file<<this->book_name<<endl;
 		file<<this->author_name<<endl;
@@ -90,8 +90,12 @@ public:
 		cout<<"Author Name: "; getline(cin,an);
 
 		string file_name = bn +'_'+ an;
-		const char* file_name_cstr = file_name.c_str();
-		remove(file_name_cstr);
+		fstream file;
+		file.open(file_name,ios::out);
+
+		if(!file.is_open()) cout<<"ERROR OPENINIG FILE!"<<endl;
+
+		file.close();
 	}
 
 	void issue_book(){
@@ -107,7 +111,7 @@ public:
 		fstream file;
 		file.open(file_name,ios::out);
 
-		if(!file.is_open()) cout<<"ERROR OPENINI FILE!"<<endl;
+		if(!file.is_open()) cout<<"ERROR OPENINIG FILE!"<<endl;
 
 		file<<this->book_name<<endl;
 		file<<this->author_name<<endl;
