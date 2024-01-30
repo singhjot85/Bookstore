@@ -1,136 +1,148 @@
-#include <iostream>
-#inculde<stdlib.h>
-#include <fstream>
-
+#include<bits/stdc++.h>
+#include<fstream>
 using namespace std;
 
-class book	{
-	char title[20],author[20];
+void choices();
+class book{
+private: 
+	string book_name;
+	string author_name;
 	int price,stock;
-	
-	public:
-		void feeddata()	{
-			cout<<"\nEnter Title Of Book: "; cin.getline(title,20);
-			cout<<"Enter Author Of Book: ";  cin.getline(author,20);
-			cout<<"Enter Price Of Book: "; cin>>price;
-			cout<<"Enter Number Of Books in Stock: "; cin>>stock;
-		}
-		
-		void showdata()	{
-			cout<<"\nTitle: "<<title;
-			cout<<"\nAuthor: "<<author;
-			cout<<"\nPrice: Rs. "<<price;
-			cout<<"\nStock: "<<stock<<" books";
-		}
-		
-		bool search(char t[],char a[])	{
-			if(strcmp(title,t)==0 && strcmp(author,a)==0)
-				return true;
-			else
-				return false;
-		}
-		
-		void buybook()	{
-			int count;
-			cout<<"\nEnter Number Of Books to buy: ";
-			cin>>count;
-			if(count<=stock)	{
-				stock=stock-count;
-				cout<<"\nBooks Bought Sucessfully";
-				cout<<"\nAmount: Rs. "<<price*count;
-			}
-			else
-				cout<<"\nRequired Copies not in Stock";
-		}
-		
-		void editdata()	{
-			int newstock;
-			cout<<"\nEnter New Number Of Books in Stock: "; cin>>newstock;
-			stock=newstock;
-		}
-		
-		void saveToFile() {
-			ofstream outfile;
-			outfile.open(title);
-			outfile << title << endl;
-			outfile << author << endl;
-			outfile << price << endl;
-			outfile << stock << endl;
-			outfile.close();
-		}
+
+public:
+	//default book
+	book(){
+		this->book_name = "None";
+		this->author_name = "None";
+		this->price = stock = 0;
+	}
+	//User entered book
+	book(string bn,string an,int p,int s){
+		this->book_name = bn;
+		this->author_name = an;
+		this->price = p;
+		this->stock = s;
+	}
+
+	void enter_details(){
+		string bn,an; int p,s;
+		cout<<"**Enter book Details**: "<<endl;
+
+		cout<<"Book Name: "; getline(cin,bn);
+		this->book_name = bn;
+		cout<<"Author Name: "; getline(cin,an);
+		this->author_name = an;
+		cout<<"Price: "; cin>>p;
+		this->price = p;
+		cout<<"Stock Amount: "; cin>>s;
+		this->stock = s;
+
+		fstream file;
+		string file_name = book_name +"_"+ author_name;
+		file.open(file_name,ios::out);
+
+		if(!file.is_open()) cout<<"ERROR OPENINI FILE!"<<endl;
+
+		file<<this->book_name<<endl;
+		file<<this->author_name<<endl;
+		file<<this->price<<endl;
+		file<<this->stock<<endl;
+
+		file.close();
+	}
+
+	void edit_details(){
+		string bn1,bn2,an1,an2; int p,s;
+		cout<<"**Enter previous Details**";
+
+		cout<<"Prev Book Name: "; getline(cin,bn1);
+		cout<<"Prev Author Name: "; getline(cin,an1);
+		string file_name_prev = bn1 +'_'+ an1;
+
+		cout<<"**Enter New Details**";
+		cout<<"Book Name: "; getline(cin,bn2);
+		this->book_name = bn2;
+		cout<<"Author Name: "; getline(cin,an2);
+		this->author_name = an2;
+		cout<<"Price: "; cin>>p;
+		this->price = p;
+		cout<<"Stock Amount: "; cin>>s;
+		this->stock = s;
+
+		fstream file;
+		file.open(file_name_prev,ios::out);
+
+		if(!file.is_open()) cout<<"ERROR OPENINI FILE!"<<endl;
+
+		file<<this->book_name<<endl;
+		file<<this->author_name<<endl;
+		file<<this->price<<endl;
+		file<<this->stock<<endl;
+
+		file.close();
+	}
+
+	void delete_book(){
+		string bn,an;
+		cout<<"**Enter book Details to Delete**: "<<endl;
+
+		cout<<"Book Name: "; getline(cin,bn);
+		cout<<"Author Name: "; getline(cin,an);
+
+		string file_name = bn +'_'+ an;
+		const char* file_name_cstr = file_name.c_str();
+		remove(file_name_cstr);
+	}
+
+	void issue_book(){
+		string bn,an;
+		cout<<"**Enter Issue Book Details**"<<endl;
+
+		cout<<"Book Name: "; getline(cin,bn);
+		cout<<"Author Name: "; getline(cin,an);
+
+		string file_name = bn +'_'+ an;
+		this->stock--;
+
+		fstream file;
+		file.open(file_name,ios::out);
+
+		if(!file.is_open()) cout<<"ERROR OPENINI FILE!"<<endl;
+
+		file<<this->book_name<<endl;
+		file<<this->author_name<<endl;
+		file<<this->price<<endl;
+		file<<this->stock<<endl;
+
+		file.close();
+	}
+
 };
 
-int main()	{
-	book *B[20];
-	int i=0,r,t,choice;
-	char titlebuy[20],authorbuy[20];
-	while(1)	{
-		cout<<"\n\n\t\tMENU"
-		<<"\n1. Entry of New Book"
-		<<"\n2. Buy Book"
-		<<"\n3. Search For Book"
-		<<"\n4. Edit Details Of Book"
-		<<"\n5. Exit"
-		<<"\n\nEnter your Choice: ";
-		cin>>choice;
-		
-		switch(choice)	{
-			case 1:	B[i] = new book;
-				B[i]->feeddata();
-				B[i]->saveToFile();
-				i++;	break;
-				
-			case 2: cin.ignore();
-				cout<<"\nEnter Title Of Book: "; cin.getline(titlebuy,20);
-				cout<<"Enter Author Of Book: ";  cin.getline(authorbuy,20);
-				for(t=0;t<i;t++)	{
-					if(B[t]->search(titlebuy,authorbuy))	{
-						B[t]->buybook();
-						break;
-					}
-				}
-				if(t==1)
-				cout<<"\nThis Book is Not in Stock";
-				
-				break;
-			case 3: cin.ignore();
-				cout<<"\nEnter Title Of Book: "; cin.getline(titlebuy,20);
-				cout<<"Enter Author Of Book: ";  cin.getline(authorbuy,20);
-				
-				for(t=0;t<i;t++)	{
-					if(B[t]->search(titlebuy,authorbuy))	{
-						cout<<"\nBook Found Successfully";
-						B[t]->showdata();
-						break;
-					}
-				}
-				if(t==i)
-				cout<<"\nThis Book is Not in Stock";
-				break;
-			
-			case 4: cin.ignore();
-				cout<<"\nEnter Title Of Book: "; cin.getline(titlebuy,20);
-				cout<<"Enter Author Of Book: ";  cin.getline(authorbuy,20);
-				
-				for(t=0;t<i;t++)	{
-					if(B[t]->search(titlebuy,authorbuy))	{
-						cout<<"\nBook Found Successfully";
-						B[t]->editdata();
-						break;
-					}
-				}
-				if(t==i)
-				cout<<"\nThis Book is Not in Stock";
-				break;
-			
-			case 5: exit(0);
-			default: cout<<"\nInvalid Choice Entered";
-			
-		}
+int main(){
+
+	while(true){
+		choices();
+		int input; cin>>input;
+		cin.ignore();
+
+		book book_obj;
+		if(input == 1) book_obj.enter_details();
+		else if(input == 2) book_obj.edit_details();
+		else if(input == 3) book_obj.delete_book();
+		else if(input == 4)	book_obj.issue_book();
+		else if(input == 5) break;
+		else cout<<"Invalid input,Retry."<<endl;
 	}
 	
-	
-	
-	
 	return 0;
+}
+
+void choices(){
+	cout<<"***Select Options***"<<endl;
+	cout<<"1. Enter book detail"<<endl;
+	cout<<"2. Edit  book detail"<<endl;
+	cout<<"3. Delete a book"<<endl;
+	cout<<"4. Issue a book"<<endl;
+	cout<<"5. Exit"<<endl;
 }
